@@ -15,11 +15,10 @@ class TradingJournalApp extends StatelessWidget {
       theme: const CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: CupertinoColors.systemYellow,
-        // Forces the native iOS font stack instead of Android's Roboto
         textTheme: CupertinoTextThemeData(
           textStyle: TextStyle(
             fontFamily: '.SF Pro Text',
-            fontSize: 17.0, // Standard iOS body text size
+            fontSize: 17.0,
             letterSpacing: -0.41,
           ),
           navTitleTextStyle: TextStyle(
@@ -43,7 +42,6 @@ class MainNavBar extends StatefulWidget {
 }
 
 class _MainNavBarState extends State<MainNavBar> {
-  // We need to track the active tab to swap icons between outlined and filled
   int _currentIndex = 0;
 
   @override
@@ -51,7 +49,8 @@ class _MainNavBarState extends State<MainNavBar> {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         activeColor: CupertinoColors.systemYellow,
-        inactiveColor: CupertinoColors.systemGrey, // Standard iOS unselected color
+        inactiveColor: CupertinoColors.systemGrey,
+        iconSize: 26.0, // Shrunk from 30.0 to match native iOS proportions
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -64,40 +63,32 @@ class _MainNavBarState extends State<MainNavBar> {
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 1 ? CupertinoIcons.book_fill : CupertinoIcons.book),
-            label: 'Journal',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 2 ? CupertinoIcons.chart_bar_alt_fill : CupertinoIcons.chart_bar),
+            icon: Icon(_currentIndex == 1 ? CupertinoIcons.chart_bar_alt_fill : CupertinoIcons.chart_bar_alt), // Fixed matching pair
             label: 'Trades',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 3 ? CupertinoIcons.chart_pie_fill : CupertinoIcons.chart_pie),
+            icon: Icon(_currentIndex == 2 ? CupertinoIcons.chart_pie_fill : CupertinoIcons.chart_pie),
             label: 'Analytics',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 4 ? CupertinoIcons.ellipsis_circle_fill : CupertinoIcons.ellipsis_circle),
+            icon: Icon(_currentIndex == 3 ? CupertinoIcons.ellipsis_circle_fill : CupertinoIcons.ellipsis_circle),
             label: 'More',
           ),
         ],
       ),
       tabBuilder: (BuildContext context, int index) {
-        return CupertinoTabView(
-          builder: (BuildContext context) {
-            // Determines the title based on the index
-            final titles = ['Dashboard', 'Journal', 'Trades', 'Analytics', 'More'];
-            return CupertinoPageScaffold(
-              navigationBar: CupertinoNavigationBar(
-                middle: Text(titles[index]),
-              ),
-              child: Center(
-                child: Text(
-                  'This is the ${titles[index]} page',
-                  style: const TextStyle(color: CupertinoColors.white),
-                ),
-              ),
-            );
-          },
+        // Updated to 4 tabs
+        final titles = ['Dashboard', 'Trades', 'Analytics', 'More'];
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(titles[index]),
+          ),
+          child: Center(
+            child: Text(
+              'This is the ${titles[index]} page',
+              style: const TextStyle(color: CupertinoColors.white),
+            ),
+          ),
         );
       },
     );
