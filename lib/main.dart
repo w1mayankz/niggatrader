@@ -50,45 +50,55 @@ class _MainNavBarState extends State<MainNavBar> {
       tabBar: CupertinoTabBar(
         activeColor: CupertinoColors.systemYellow,
         inactiveColor: CupertinoColors.systemGrey,
-        iconSize: 26.0, // Shrunk from 30.0 to match native iOS proportions
+        iconSize: 26.0,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        items: <BottomNavigationBarItem>[
+        // OPTIMIZED: Using the built-in activeIcon property for all items
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 0 ? CupertinoIcons.square_grid_2x2_fill : CupertinoIcons.square_grid_2x2),
+            icon: Icon(CupertinoIcons.square_grid_2x2),
+            activeIcon: Icon(CupertinoIcons.square_grid_2x2_fill),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 1 ? CupertinoIcons.chart_bar_alt_fill : CupertinoIcons.chart_bar_alt), // Fixed matching pair
+            icon: Icon(CupertinoIcons.chart_bar),
+            activeIcon: Icon(CupertinoIcons.chart_bar_fill),
             label: 'Trades',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 2 ? CupertinoIcons.chart_pie_fill : CupertinoIcons.chart_pie),
+            icon: Icon(CupertinoIcons.chart_pie),
+            activeIcon: Icon(CupertinoIcons.chart_pie_fill),
             label: 'Analytics',
           ),
           BottomNavigationBarItem(
-            icon: Icon(_currentIndex == 3 ? CupertinoIcons.ellipsis_circle_fill : CupertinoIcons.ellipsis_circle),
+            icon: Icon(CupertinoIcons.ellipsis_circle),
+            activeIcon: Icon(CupertinoIcons.ellipsis_circle_fill),
             label: 'More',
           ),
         ],
       ),
       tabBuilder: (BuildContext context, int index) {
-        // Updated to 4 tabs
         final titles = ['Dashboard', 'Trades', 'Analytics', 'More'];
-        return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(titles[index]),
-          ),
-          child: Center(
-            child: Text(
-              'This is the ${titles[index]} page',
-              style: const TextStyle(color: CupertinoColors.white),
-            ),
-          ),
+        
+        // RESTORED: CupertinoTabView keeps the independent navigation history alive for each tab
+        return CupertinoTabView(
+          builder: (BuildContext context) {
+            return CupertinoPageScaffold(
+              navigationBar: CupertinoNavigationBar(
+                middle: Text(titles[index]),
+              ),
+              child: Center(
+                child: Text(
+                  'This is the ${titles[index]} page',
+                  style: const TextStyle(color: CupertinoColors.white),
+                ),
+              ),
+            );
+          },
         );
       },
     );
