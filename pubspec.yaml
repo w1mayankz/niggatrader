@@ -1,0 +1,13 @@
+name: trading_journal
+description: A classic iOS style trading journal.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  shadcn_flutter: ^0.0.1
