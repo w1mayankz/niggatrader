@@ -16,16 +16,23 @@ class TradingJournalApp extends StatelessWidget {
         brightness: Brightness.dark,
         primaryColor: CupertinoColors.systemYellow,
         textTheme: CupertinoTextThemeData(
+          // NO DOTS: Forces Flutter to use the downloaded .otf files
           textStyle: TextStyle(
-            fontFamily: '.SF Pro Text',
+            fontFamily: 'SF Pro Text',
             fontSize: 17.0,
             letterSpacing: -0.41,
           ),
           navTitleTextStyle: TextStyle(
-            fontFamily: '.SF Pro Display',
+            fontFamily: 'SF Pro Display',
             fontSize: 17.0,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.41,
+          ),
+          tabLabelTextStyle: TextStyle(
+            fontFamily: 'SF Pro Text',
+            fontSize: 10.0,
+            fontWeight: FontWeight.w500,
+            letterSpacing: -0.24,
           ),
         ),
       ),
@@ -57,7 +64,6 @@ class _MainNavBarState extends State<MainNavBar> {
             _currentIndex = index;
           });
         },
-        // OPTIMIZED: Using the built-in activeIcon property for all items
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.square_grid_2x2),
@@ -82,11 +88,14 @@ class _MainNavBarState extends State<MainNavBar> {
         ],
       ),
       tabBuilder: (BuildContext context, int index) {
-        final titles = ['Dashboard', 'Trades', 'Analytics', 'More'];
-        
-        // RESTORED: CupertinoTabView keeps the independent navigation history alive for each tab
         return CupertinoTabView(
           builder: (BuildContext context) {
+            // Replaces the generic text page with our custom Trades tab
+            if (index == 1) {
+              return const TradesTab();
+            }
+            
+            final titles = ['Dashboard', 'Trades', 'Analytics', 'More'];
             return CupertinoPageScaffold(
               navigationBar: CupertinoNavigationBar(
                 middle: Text(titles[index]),
@@ -101,6 +110,59 @@ class _MainNavBarState extends State<MainNavBar> {
           },
         );
       },
+    );
+  }
+}
+
+class TradesTab extends StatelessWidget {
+  const TradesTab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoPageScaffold(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          const CupertinoSliverNavigationBar(
+            largeTitle: Text('Trades'),
+          ),
+          SliverFillRemaining(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                CupertinoListSection.insetGrouped(
+                  header: const Text('RECENT SETUPS'),
+                  children: [
+                    CupertinoListTile.notched(
+                      title: const Text('US30 Continuation'),
+                      subtitle: const Text('Long • Entry: 38,450.00'),
+                      additionalInfo: const Text('+ \$450', style: TextStyle(color: CupertinoColors.activeGreen)),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {},
+                    ),
+                    CupertinoListTile.notched(
+                      title: const Text('US30 Continuation'),
+                      subtitle: const Text('Short • Entry: 38,600.00'),
+                      additionalInfo: const Text('- \$120', style: TextStyle(color: CupertinoColors.destructiveRed)),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+                CupertinoListSection.insetGrouped(
+                  header: const Text('QUICK ACTIONS'),
+                  children: [
+                    CupertinoListTile.notched(
+                      title: const Text('Log New Trade'),
+                      leading: const Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemYellow),
+                      onTap: () {},
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
