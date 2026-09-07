@@ -1,4 +1,4 @@
-name: trading_journal
+name: NiggaTrader
 description: A classic iOS style trading journal.
 publish_to: 'none'
 version: 1.0.0+1
@@ -11,3 +11,16 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.6
   shadcn_flutter: ^0.0.1
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: SF Pro Text
+      fonts:
+        - asset: fonts/SF-Pro-Text-Regular.otf
+        - asset: fonts/SF-Pro-Text-Medium.otf
+          weight: 500
+    - family: SF Pro Display
+      fonts:
+        - asset: fonts/SF-Pro-Display-Semibold.otf
+          weight: 600
