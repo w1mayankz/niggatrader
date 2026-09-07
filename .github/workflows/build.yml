@@ -21,8 +21,9 @@ jobs:
         with:
           channel: 'stable'
 
+      # FIXED: Forces the lowercase project name so the folder name doesn't crash it
       - name: Generate Android files
-        run: flutter create --platforms=android .
+        run: flutter create --project-name niggatrader --platforms=android .
 
       - name: Download SF Pro Fonts
         run: |
@@ -57,8 +58,9 @@ jobs:
         with:
           channel: 'stable'
 
+      # FIXED: Forces the lowercase project name here too
       - name: Generate Web files
-        run: flutter create --platforms=web .
+        run: flutter create --project-name niggatrader --platforms=web .
 
       - name: Download SF Pro Fonts
         run: |
