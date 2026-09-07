@@ -13,10 +13,10 @@ class TradingJournalApp extends StatelessWidget {
       title: 'Trading Journal',
       debugShowCheckedModeBanner: false,
       theme: const CupertinoThemeData(
-        brightness: Brightness.dark,
-        primaryColor: CupertinoColors.systemYellow,
+        brightness: Brightness.light,
+        primaryColor: CupertinoColors.activeBlue, // Native iOS Blue
+        scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground, // Critical for the native blur and list contrast
         textTheme: CupertinoTextThemeData(
-          // NO DOTS: Forces Flutter to use the downloaded .otf files
           textStyle: TextStyle(
             fontFamily: 'SF Pro Text',
             fontSize: 17.0,
@@ -27,6 +27,14 @@ class TradingJournalApp extends StatelessWidget {
             fontSize: 17.0,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.41,
+          ),
+          // FIXED: This kills Roboto on the large scrolling titles
+          navLargeTitleTextStyle: TextStyle(
+            fontFamily: 'SF Pro Display',
+            fontSize: 34.0,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.37,
+            color: CupertinoColors.black,
           ),
           tabLabelTextStyle: TextStyle(
             fontFamily: 'SF Pro Text',
@@ -49,13 +57,14 @@ class MainNavBar extends StatefulWidget {
 }
 
 class _MainNavBarState extends State<MainNavBar> {
-  int _currentIndex = 0;
+  int _currentIndex = 1; // Defaulting to Trades tab for testing
 
   @override
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
+      // The background blurs automatically when scrollable content passes underneath it
       tabBar: CupertinoTabBar(
-        activeColor: CupertinoColors.systemYellow,
+        activeColor: CupertinoColors.activeBlue,
         inactiveColor: CupertinoColors.systemGrey,
         iconSize: 26.0,
         currentIndex: _currentIndex,
@@ -90,7 +99,6 @@ class _MainNavBarState extends State<MainNavBar> {
       tabBuilder: (BuildContext context, int index) {
         return CupertinoTabView(
           builder: (BuildContext context) {
-            // Replaces the generic text page with our custom Trades tab
             if (index == 1) {
               return const TradesTab();
             }
@@ -103,7 +111,6 @@ class _MainNavBarState extends State<MainNavBar> {
               child: Center(
                 child: Text(
                   'This is the ${titles[index]} page',
-                  style: const TextStyle(color: CupertinoColors.white),
                 ),
               ),
             );
@@ -122,42 +129,44 @@ class TradesTab extends StatelessWidget {
     return CupertinoPageScaffold(
       child: CustomScrollView(
         slivers: <Widget>[
-          const CupertinoSliverNavigationBar(
-            largeTitle: Text('Trades'),
-          ),
-          SliverFillRemaining(
-            child: ListView(
+          CupertinoSliverNavigationBar(
+            largeTitle: const Text('Trades'),
+            // Matches the top left Edit text
+            leading: CupertinoButton(
               padding: EdgeInsets.zero,
-              children: [
+              child: const Text('Edit'),
+              onPressed: () {},
+            ),
+            // Matches the top right three-dot menu
+            trailing: CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: const Icon(CupertinoIcons.ellipsis_circle),
+              onPressed: () {},
+            ),
+          ),
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
                 CupertinoListSection.insetGrouped(
-                  header: const Text('RECENT SETUPS'),
-                  children: [
-                    CupertinoListTile.notched(
-                      title: const Text('US30 Continuation'),
-                      subtitle: const Text('Long • Entry: 38,450.00'),
-                      additionalInfo: const Text('+ \$450', style: TextStyle(color: CupertinoColors.activeGreen)),
+                  hasLeading: false,
+                  // Generates a minimal long list to prove the blur works
+                  children: List.generate(20, (index) {
+                    final isNQ = index % 2 == 0;
+                    final isWin = index % 3 != 0;
+                    
+                    return CupertinoListTile.notched(
+                      title: Text(isNQ ? 'NQ1!' : 'MNQ1!'),
+                      additionalInfo: Text(
+                        isWin ? '+\$350.00' : '-\$150.00',
+                        style: TextStyle(
+                          color: isWin ? CupertinoColors.activeGreen : CupertinoColors.destructiveRed,
+                        ),
+                      ),
                       trailing: const CupertinoListTileChevron(),
                       onTap: () {},
-                    ),
-                    CupertinoListTile.notched(
-                      title: const Text('US30 Continuation'),
-                      subtitle: const Text('Short • Entry: 38,600.00'),
-                      additionalInfo: const Text('- \$120', style: TextStyle(color: CupertinoColors.destructiveRed)),
-                      trailing: const CupertinoListTileChevron(),
-                      onTap: () {},
-                    ),
-                  ],
+                    );
+                  }),
                 ),
-                CupertinoListSection.insetGrouped(
-                  header: const Text('QUICK ACTIONS'),
-                  children: [
-                    CupertinoListTile.notched(
-                      title: const Text('Log New Trade'),
-                      leading: const Icon(CupertinoIcons.add_circled_solid, color: CupertinoColors.systemYellow),
-                      onTap: () {},
-                    ),
-                  ],
-                )
               ],
             ),
           ),
