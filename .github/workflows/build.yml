@@ -4,14 +4,12 @@ on:
   push:
     branches: [ "main", "master" ]
 
-# Grants permissions to GitHub Pages to host your site
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # JOB 1: BUILDS THE APK FILE
   build-apk:
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +24,13 @@ jobs:
       - name: Generate Android files
         run: flutter create --platforms=android .
 
+      - name: Download SF Pro Fonts
+        run: |
+          mkdir -p fonts
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Regular.otf" -o fonts/SF-Pro-Text-Regular.otf
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Medium.otf" -o fonts/SF-Pro-Text-Medium.otf
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Semibold.otf" -o fonts/SF-Pro-Display-Semibold.otf
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -38,7 +43,6 @@ jobs:
           name: trading-journal-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
-  # JOB 2: UPDATES THE LIVE WEB PREVIEW
   deploy-web:
     runs-on: ubuntu-latest
     environment:
@@ -55,6 +59,13 @@ jobs:
 
       - name: Generate Web files
         run: flutter create --platforms=web .
+
+      - name: Download SF Pro Fonts
+        run: |
+          mkdir -p fonts
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Regular.otf" -o fonts/SF-Pro-Text-Regular.otf
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Text-Medium.otf" -o fonts/SF-Pro-Text-Medium.otf
+          curl -sL "https://raw.githubusercontent.com/sahibjotsaggu/San-Francisco-Pro-Fonts/master/SF-Pro-Display-Semibold.otf" -o fonts/SF-Pro-Display-Semibold.otf
 
       - name: Install dependencies
         run: flutter pub get
