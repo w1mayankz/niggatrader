@@ -17,9 +17,24 @@ class TradingJournalApp extends StatelessWidget {
         primaryColor: CupertinoColors.activeBlue,
         scaffoldBackgroundColor: CupertinoColors.systemGroupedBackground,
         textTheme: CupertinoTextThemeData(
+          // Kills Roboto on main text
           textStyle: TextStyle(
             fontFamily: 'SF Pro Text',
             fontSize: 17.0,
+            letterSpacing: -0.41,
+          ),
+          // Kills Roboto on top navbar buttons (like the "Add" text)
+          navActionTextStyle: TextStyle(
+            fontFamily: 'SF Pro Text',
+            fontSize: 17.0,
+            color: CupertinoColors.activeBlue,
+            letterSpacing: -0.41,
+          ),
+          // Kills Roboto on popups and dropdowns
+          actionTextStyle: TextStyle(
+            fontFamily: 'SF Pro Text',
+            fontSize: 17.0,
+            color: CupertinoColors.activeBlue,
             letterSpacing: -0.41,
           ),
           navTitleTextStyle: TextStyle(
@@ -128,43 +143,53 @@ class TradesTab extends StatelessWidget {
             largeTitle: const Text('Trades'),
             leading: CupertinoButton(
               padding: EdgeInsets.zero,
-              child: const Text('Add', style: TextStyle(fontSize: 17.0)),
+              // Font size and SF Pro are now automatically inherited from navActionTextStyle
+              child: const Text('Add'),
               onPressed: () {},
             ),
-            // TAPPING this now opens the native iOS Action Sheet menu
             trailing: CupertinoButton(
               padding: EdgeInsets.zero,
               child: const Icon(CupertinoIcons.ellipsis_circle, size: 28.0),
               onPressed: () {
-                showCupertinoModalPopup<void>(
+                // The Tap-to-Open Dropdown Trick
+                showCupertinoDialog(
+                  barrierDismissible: true,
                   context: context,
-                  builder: (BuildContext context) => CupertinoActionSheet(
-                    title: const Text('Trade Options'),
-                    actions: <CupertinoActionSheetAction>[
-                      CupertinoActionSheetAction(
-                        child: const Text('Sort Logs'),
-                        onPressed: () => Navigator.pop(context),
+                  builder: (context) {
+                    return Align(
+                      // Positions the menu in the top right, exactly under the icon
+                      alignment: const Alignment(0.9, -0.72),
+                      child: SizedBox(
+                        width: 220,
+                        // Wraps the native inset list so it acts as a floating dropdown
+                        child: CupertinoListSection.insetGrouped(
+                          margin: EdgeInsets.zero,
+                          children: [
+                            CupertinoListTile.notched(
+                              title: const Text('Sort Logs'),
+                              trailing: const Icon(CupertinoIcons.sort_down, color: CupertinoColors.activeBlue),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                            CupertinoListTile.notched(
+                              title: const Text('Copy Data'),
+                              trailing: const Icon(CupertinoIcons.doc_on_clipboard, color: CupertinoColors.activeBlue),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                            CupertinoListTile.notched(
+                              title: const Text('Share'),
+                              trailing: const Icon(CupertinoIcons.share, color: CupertinoColors.activeBlue),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                            CupertinoListTile.notched(
+                              title: const Text('Delete All', style: TextStyle(color: CupertinoColors.destructiveRed)),
+                              trailing: const Icon(CupertinoIcons.delete, color: CupertinoColors.destructiveRed),
+                              onTap: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
                       ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Copy Data'),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      CupertinoActionSheetAction(
-                        child: const Text('Share'),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      CupertinoActionSheetAction(
-                        isDestructiveAction: true,
-                        child: const Text('Delete All'),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                    cancelButton: CupertinoActionSheetAction(
-                      isDefaultAction: true,
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
@@ -172,9 +197,7 @@ class TradesTab extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                // FIRST DATE SECTION
                 CupertinoListSection.insetGrouped(
-                  // FIXED: Forced native small, grey header text
                   header: const Text(
                     'SEP 7, 2026',
                     style: TextStyle(
@@ -183,12 +206,10 @@ class TradesTab extends StatelessWidget {
                     ),
                   ),
                   children: List.generate(10, (index) {
-                    final isWin = index % 3 != 0; // Dummy logic to mix wins/losses
+                    final isWin = index % 3 != 0;
                     return ExpandableTradeRow(isWin: isWin);
                   }),
                 ),
-                
-                // SECOND DATE SECTION
                 CupertinoListSection.insetGrouped(
                   header: const Text(
                     'SEP 4, 2026',
@@ -211,7 +232,6 @@ class TradesTab extends StatelessWidget {
   }
 }
 
-// CUSTOM ACCORDION ROW (Built strictly from Cupertino widgets)
 class ExpandableTradeRow extends StatefulWidget {
   final bool isWin;
   
@@ -229,7 +249,7 @@ class _ExpandableTradeRowState extends State<ExpandableTradeRow> {
     return Column(
       children: [
         CupertinoListTile.notched(
-          title: const Text('NQ1!'), // Minimal format: strictly ticker
+          title: const Text('NQ1!'),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(6.0),
             child: Image.asset(
@@ -251,7 +271,6 @@ class _ExpandableTradeRowState extends State<ExpandableTradeRow> {
             ),
           ),
           trailing: Icon(
-            // Toggles the chevron when expanded
             _isExpanded ? CupertinoIcons.chevron_down : CupertinoIcons.chevron_right,
             color: CupertinoColors.systemGrey3,
             size: 18.0,
@@ -262,7 +281,6 @@ class _ExpandableTradeRowState extends State<ExpandableTradeRow> {
             });
           },
         ),
-        // Hidden Accordion Details
         if (_isExpanded)
           Container(
             width: double.infinity,
